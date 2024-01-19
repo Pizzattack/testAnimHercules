@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pyxel
 
-pyxel.init(width=320, height=240, title="Breakout",display_scale=3,fps=10)
+pyxel.init(width=320, height=240, title="Hercules",display_scale=3,fps=10)
 
 pyxel.colors[0]=0X000000
 pyxel.colors[1]=0Xaea8cf
@@ -20,7 +20,6 @@ pyxel.colors[12]=0XFFFFFF
 #pyxel.colors[14]=0X866667
 pyxel.colors[15]=0Xff00ff
 pyxel.images[0].load(0, 0, "sprites.png")
-pyxel.images[1].load(0, 0, "111132.png")
 
 offsetH = 3
 spH = 48
