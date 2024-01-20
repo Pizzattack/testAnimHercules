@@ -30,15 +30,30 @@ spVX = 0
 spVY = 0
 spGround = spY+spH
 
-animladder = 0
 animcount = 0
 animtype = 0
 animdirection = -1 # gauche et -1 droite pour le flip des sprites
 
+def isup():
+    return pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP)
+def isdown():
+    return pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN)
+def isleft():
+    return pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT)
+def isright():
+    return pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT)
+def isbuttA():
+    return pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_A) 
+
 def onladder():
+    global animcount,animtype,animdirection
+    global spX,spY,spH,spW
+    global spVX,spVY
     return abs(spX+spW/2-pyxel.width/2)<=8
 def falling():
-    global spX,spY
+    global animcount,animtype,animdirection
+    global spX,spY,spH,spW
+    global spVX,spVY
     if spY+spH==spGround:
         return False
     if (spX+spW/4<pyxel.width/2-32) and (spY+spH==spGround-12*8):
@@ -47,14 +62,23 @@ def falling():
 
 def update():
     global animcount,animtype,animdirection
-    global spX,spY
-    global spVX, spVY
+    global spX,spY,spH,spW
+    global spVX,spVY
+    if isbuttA():
+        spH = 48
+        spW = 36
+        spX = pyxel.width - spW
+        spY = pyxel.height -spH -50
+        spVX = 0
+        spVY = 0
+        animcount = 0
+        animtype = 0
     if (animtype!=4 and falling()):
         animtype=4
         animcount=2
         spVY = spVY + 1 
-    elif (animtype!=4) and pyxel.btn(pyxel.KEY_UP) and (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_RIGHT)):
-        if (pyxel.btn(pyxel.KEY_LEFT)):
+    elif (animtype!=4) and isup() and (isleft() or isright()):
+        if isleft():
             animdirection=-1
         else:
             animdirection=1
@@ -62,21 +86,21 @@ def update():
         animcount=0
         spVX = 6*animdirection
         spVY = -8
-    elif onladder() and pyxel.btn(pyxel.KEY_UP) and not (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_RIGHT)):
+    elif onladder() and isup() and not (isleft() or isright()):
         if (animtype==5 and animcount==2) or (animtype==8) or (animtype==0):
             animcount=0
             animtype=6
         elif (animtype!=5 and animtype!=6):
             animcount=0
             animtype=5   
-    elif onladder() and pyxel.btn(pyxel.KEY_DOWN) and not (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_RIGHT)):
+    elif onladder() and isdown() and not (isleft() or isright()):
         if (animtype==7 and animcount==2)or(animtype==6) or (animtype==0 and onladder()):
             animcount=3
             animtype=8
         elif (animtype!=7 and animtype!=8):
             animcount=0
             animtype=7  
-    elif (animtype==4):        
+    elif (animtype==4):    
         if (spY+spH<=spGround) and (spY+spH+spVY>spGround):
             spY=spGround-spH
             spVY=0
@@ -91,19 +115,19 @@ def update():
             spX = spX + spVX
             spY = spY + spVY
             spVY = spVY + 1 
-    elif (not onladder()) and pyxel.btn(pyxel.KEY_UP) and not (pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_RIGHT)):
+    elif (not onladder()) and isup() and not (isleft() or isright()):
         if (animtype!=5 and animtype!=6):
             animcount=0
             animtype=5  
-    elif pyxel.btn(pyxel.KEY_DOWN):
+    elif isdown():
         animtype=2    
-    elif animdirection!=-1 and pyxel.btn(pyxel.KEY_LEFT):
+    elif animdirection!=-1 and isleft():
         animtype=3
-    elif animdirection==-1 and pyxel.btn(pyxel.KEY_LEFT):
+    elif animdirection==-1 and isleft():
         animtype=1
-    elif animdirection!=1 and pyxel.btn(pyxel.KEY_RIGHT):
+    elif animdirection!=1 and isright():
         animtype=3
-    elif (animdirection==1) and pyxel.btn(pyxel.KEY_RIGHT):
+    elif (animdirection==1) and isright():
         animtype=1
     else:
         if (animtype!=0):
